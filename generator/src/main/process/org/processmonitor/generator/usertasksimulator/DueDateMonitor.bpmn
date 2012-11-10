@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="dueDateMonitor" name="Due date monitor">
+    <documentation>monitor tasks queues and generate report when there is 50% possibility to reach due time on one tasks in the queue
+input params
+simulationStartTime
+</documentation>
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <serviceTask id="servicetask1" name="Simulate user activity" activiti:expression="${simulator.simulate( processDefinitionId, 500, simulationStartTime)}" activiti:resultVariableName="simulationResults"></serviceTask>
+    <sequenceFlow id="flow1" name="" sourceRef="startevent1" targetRef="servicetask1"></sequenceFlow>
+    <scriptTask id="scripttask1" name="Process results" scriptFormat="groovy">
+      <script><![CDATA[highlightTasks = org.processmonitor.generator.usertasksimulator.UserTaskResultPostProcessor.getHighLightedTasks( simulationResults, 50.0);
+nodeDescription = org.processmonitor.generator.usertasksimulator.UserTaskResultPostProcessor.getNodeDescription( simulationResults, 50.0);]]></script>
+    </scriptTask>
+    <sequenceFlow id="flow2" name="" sourceRef="servicetask1" targetRef="scripttask1"></sequenceFlow>
+    <callActivity id="callactivity1" name="Generate report" calledElement="generateProcessDiagram">
+      <extensionElements>
+        <activiti:in source="processDefinitionId" target="processDefinitionId"></activiti:in>
+        <activiti:in source="nodeDescription" target="counts"></activiti:in>
+        <activiti:in source="highlightTasks" target="highLightedActivities"></activiti:in>
+        <activiti:out source="processDiagram" target="processDiagram"></activiti:out>
+      </extensionElements>
+    </callActivity>
+    <sequenceFlow id="flow3" name="" sourceRef="scripttask1" targetRef="callactivity1"></sequenceFlow>
+    <scriptTask id="scripttask2" name="Write report to file " scriptFormat="groovy">
+      <script><![CDATA[javax.imageio.ImageIO.write( javax.imageio.ImageIO.read(new ByteArrayInputStream( processDiagram)),
+				, "png"
+				, new File( reportFileName));]]></script>
+    </scriptTask>
+    <sequenceFlow id="flow5" name="" sourceRef="callactivity1" targetRef="scripttask2"></sequenceFlow>
+    <endEvent id="endevent2" name="End"></endEvent>
+    <sequenceFlow id="flow6" name="" sourceRef="scripttask2" targetRef="endevent2"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_dueDateMonitor">
+    <bpmndi:BPMNPlane bpmnElement="dueDateMonitor" id="BPMNPlane_dueDateMonitor">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35" width="35" x="100" y="190"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="servicetask1" id="BPMNShape_servicetask1">
+        <omgdc:Bounds height="55" width="105" x="180" y="180"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask1" id="BPMNShape_scripttask1">
+        <omgdc:Bounds height="55" width="105" x="340" y="180"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="callactivity1" id="BPMNShape_callactivity1">
+        <omgdc:Bounds height="55" width="105" x="500" y="180"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="scripttask2" id="BPMNShape_scripttask2">
+        <omgdc:Bounds height="55" width="105" x="660" y="180"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent2" id="BPMNShape_endevent2">
+        <omgdc:Bounds height="35" width="35" x="820" y="190"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="135" y="207"></omgdi:waypoint>
+        <omgdi:waypoint x="180" y="207"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="285" y="207"></omgdi:waypoint>
+        <omgdi:waypoint x="340" y="207"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="445" y="207"></omgdi:waypoint>
+        <omgdi:waypoint x="500" y="207"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="605" y="207"></omgdi:waypoint>
+        <omgdi:waypoint x="660" y="207"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="765" y="207"></omgdi:waypoint>
+        <omgdi:waypoint x="820" y="207"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

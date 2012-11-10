@@ -23,7 +23,7 @@ public class FifoTaskQueueHelper {
 	List<Long> levelLimits = new ArrayList<Long>();
 		
 	public void addTask(String processDefinitionKey, String taskDefinitionKey, String queueDescriptor) {
-		// task is no created yet - we have to increase count
+		// task is not created yet - we have to increase count
 		long itemCount = taskService.createTaskQuery().taskDefinitionKey(taskDefinitionKey).count() + 1;
 		for ( long limit : levelLimits )
 			if ( itemCount >= limit ) {				
