@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:activiti="http://www.activiti.org/schema/spring/components"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.activiti.org/schema/spring/components http://www.activiti.org/schema/spring/components/activiti.xsd">
+
+	   <import resource="classpath:/org/processmonitor/generator/SimpleProcessDiagramGeneratorTest-context.xml"/>
+
+       <bean id="simulator" class="org.processmonitor.generator.usertasksimulator.SimulateUserTaskTimer">
+       		<property name="userTaskExecutor" ref="userTaskExecutor"/>
+       		<property name="repositoryService" ref="repositoryService"/>
+       		<property name="taskService" ref="taskService"/>
+       </bean>
+       
+       <bean id="userTaskExecutor" class="org.processmonitor.generator.usertasksimulator.executor.impl.TaskInstanceHistoryExecutor">
+       		<property name="historyService" ref="mockHistoryService"/>
+       		<property name="backUpExecutor" ref="backUpTaskExecutor"/>
+       </bean>
+       
+       <bean id="backUpTaskExecutor" class="org.processmonitor.generator.usertasksimulator.executor.impl.ConstantUserTaskExecutor">
+       		<constructor-arg value="1000"/>
+       </bean>
+       
+       <bean id="mockHistoryService" class="org.mockito.Mockito" factory-method="mock"  >
+		<constructor-arg value="org.activiti.engine.HistoryService" />
+	</bean>
+</beans>

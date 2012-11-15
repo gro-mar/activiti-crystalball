@@ -62,7 +62,7 @@ public class UserTaskResultPostProcessor {
 		for ( Entry<String,Long> occurence : ocurrences.entrySet() ) {
 			float percentage = occurence.getValue() / size;
 			if ( percentage > writeDescriptionTreshold )
-				writeDescTasks.put( occurence.getKey(), String.format("%.2f", percentage)+"%" );
+				writeDescTasks.put( occurence.getKey(), String.format("%d", Math.round( percentage))+"%" );
 		}
 				
 		return writeDescTasks;		

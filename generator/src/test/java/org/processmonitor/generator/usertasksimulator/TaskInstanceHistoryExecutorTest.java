@@ -1,6 +1,10 @@
 package org.processmonitor.generator.usertasksimulator;
 
-import java.io.FileNotFoundException;
+import static org.junit.Assert.assertTrue;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,14 +21,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.processmonitor.generator.DiagramGeneratorTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath*:/org/processmonitor/generator/usertasksimulator/ConstantDueDateMonitorTest-context.xml")
-public class ConstantDueDateMonitorTest {
+@ContextConfiguration("classpath*:/org/processmonitor/generator/usertasksimulator/TaskInstanceHistoryDueDateMonitorTest-context.xml")
+public class TaskInstanceHistoryExecutorTest extends DiagramGeneratorTest {
 
 	private static String PROCESS_KEY = "BasicDueDateSimulationTest";
 	private static String MONITOR_PROCESS_KEY = "dueDateMonitor";
@@ -39,7 +44,7 @@ public class ConstantDueDateMonitorTest {
 	private TaskService taskService;
 
 	@Before
-	public void before() {
+	public void before() throws InterruptedException {
 		// deploy processes
 		repositoryService.createDeployment()
 	       .addClasspathResource("org/processmonitor/generator/usertasksimulator/BasicDueDateSimulationTest.bpmn")
@@ -53,7 +58,7 @@ public class ConstantDueDateMonitorTest {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(2012, 11, 7, 18, 1, 00);
 		Date dueDateFormal =   calendar.getTime();
-		calendar.set(2012, 11, 7, 18, 1, 30);
+		calendar.set(2012, 11, 7, 18, 1, 03);
 		Date dueDateValue =   calendar.getTime();
 		Map<String, Object> variables = new HashMap<String,Object>();
 		variables.put("dueDateFormal", dueDateFormal);
@@ -63,12 +68,20 @@ public class ConstantDueDateMonitorTest {
 			runtimeService.startProcessInstanceByKey( PROCESS_KEY, "BUSINESS-KEY-" + i, variables);
 		}
 
-		// put first 5 tasks to the next node
+		// put first 5 tasks to the next node after 1s sleep - to produce some historic data
 		List<Task> taskList = taskService.createTaskQuery().list();
 		for (int i = 0; i < 5; i++) {
 				Task t = taskList.get(i);
-				taskService.complete( t.getId() );
+				taskService.claim( t.getId(), "user-1");
 		}
+		
+		Thread.sleep( 1000);
+		
+		for (int i = 0; i < 5; i++) {
+			Task t = taskList.get(i);
+			taskService.complete( t.getId() );
+		}
+		
 	}
 
 	@After
@@ -79,7 +92,7 @@ public class ConstantDueDateMonitorTest {
 	  }
 
 	@Test
-	public void testDueTimeNotReached() throws FileNotFoundException {
+	public void testDueTimeNotReached() throws IOException {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(2012, 11, 7, 18, 00, 00);
 		Date currentDate =   calendar.getTime();
@@ -88,23 +101,23 @@ public class ConstantDueDateMonitorTest {
 		String id = PROCESS_KEY;
 		params.put( "processDefinitionId", id);
 		params.put( "simulationStartTime", currentDate.getTime());
-	    params.put( "reportFileName", "target/ConstantDueDateMoniorTest.dueTimeNotReached.png");
+	    params.put( "reportFileName", "target/TaskInstanceHistoryDueDateMoniorTest.dueTimeNotReached.png");
 	    
 	    // start process
 		runtimeService.startProcessInstanceByKey(
 				MONITOR_PROCESS_KEY, "MONITOR-KEY-1", params).getId();
 	    //check outputs
-		//InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/generator/SimpleProcessDiagramGeneratorTestExpected.png" );   
-		//InputStream generatedStream = new FileInputStream("target/ConstantDueDateMoniorTest.dueTimeNotReached.png");   
-	    //assertTrue( isEqual(expectedStream, generatedStream));	    	
+		InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/generator/usertasksimulator/dueTimeNotReached.png" );   
+		InputStream generatedStream = new FileInputStream("target/TaskInstanceHistoryDueDateMoniorTest.dueTimeNotReached.png");   
+	    assertTrue( isEqual(expectedStream, generatedStream));	    	
 
 	    	    
 	}
 	
 	@Test
-	public void testDueTime1Reached() {
+	public void testDueTime1Reached() throws IOException {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(2012, 11, 7, 18, 00, 30);
+		calendar.set(2012, 11, 7, 18, 00, 56);
 		Date currentDate =   calendar.getTime();
 		Map<String, Object> params = new Hashtable<String, Object>();
 		
@@ -112,17 +125,22 @@ public class ConstantDueDateMonitorTest {
 		String id = PROCESS_KEY;
 		params.put( "processDefinitionId", id);
 		params.put( "simulationStartTime", currentDate.getTime());
-	    params.put( "reportFileName", "target/ConstantDueDateMoniorTest.dueTime1Reached.png");
+	    params.put( "reportFileName", "target/TaskInstanceHistoryDueDateMoniorTest.dueTime1Reached.png");
 	    
 	    // start process
 		runtimeService.startProcessInstanceByKey(
 				MONITOR_PROCESS_KEY, "MONITOR-KEY-2", params).getId();
+		InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/generator/usertasksimulator/dueTime1Reached.png" );   
+		InputStream generatedStream = new FileInputStream("target/TaskInstanceHistoryDueDateMoniorTest.dueTime1Reached.png");   
+	    assertTrue( isEqual(expectedStream, generatedStream));	    	
+
 	}
 	
 	@Test
-	public void testDueTime2Reached() {
+	public void testDueTime2Reached() throws IOException {
+		
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(2012, 11, 7, 18, 00 , 50);
+		calendar.set(2012, 11, 7, 18, 00 , 58);
 		Date currentDate =   calendar.getTime();
 		Map<String, Object> params = new Hashtable<String, Object>();
 		
@@ -130,10 +148,15 @@ public class ConstantDueDateMonitorTest {
 		String id = PROCESS_KEY;
 		params.put( "processDefinitionId", id);
 		params.put( "simulationStartTime", currentDate.getTime());
-	    params.put( "reportFileName", "target/ConstantDueDateMoniorTest.dueTime2Reached.png");
+	    params.put( "reportFileName", "target/TaskInstanceDueDateMoniorTest.dueTime2Reached.png");
 	    
 	    // start process
 		runtimeService.startProcessInstanceByKey(
 				MONITOR_PROCESS_KEY, "MONITOR-KEY-3", params).getId();
+		InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/generator/usertasksimulator/dueTime2Reached.png" );   
+		InputStream generatedStream = new FileInputStream("target/TaskInstanceHistoryDueDateMoniorTest.dueTime2Reached.png");   
+	    assertTrue( isEqual(expectedStream, generatedStream));	    	
+
 	}
+	
 }

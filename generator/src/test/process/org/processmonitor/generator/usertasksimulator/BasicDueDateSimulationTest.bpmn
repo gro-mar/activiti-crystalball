@@ -3,10 +3,10 @@
   <process id="BasicDueDateSimulationTest" name="BasicDueDateSimulationTest">
     <startEvent id="startevent1" name="Start"></startEvent>
     <userTask id="usertask1" name="checkFormalRequirements" activiti:dueDate="${dueDateFormal}"></userTask>
-    <sequenceFlow id="flow1" name="" sourceRef="startevent1" targetRef="usertask1"></sequenceFlow>
     <userTask id="usertask2" name="ValueCheck" activiti:dueDate="${dueDateValue}"></userTask>
-    <sequenceFlow id="flow2" name="" sourceRef="usertask1" targetRef="usertask2"></sequenceFlow>
     <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow1" name="" sourceRef="startevent1" targetRef="usertask1"></sequenceFlow>
+    <sequenceFlow id="flow2" name="" sourceRef="usertask1" targetRef="usertask2"></sequenceFlow>
     <sequenceFlow id="flow3" name="" sourceRef="usertask2" targetRef="endevent1"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_BasicDueDateSimulationTest">
