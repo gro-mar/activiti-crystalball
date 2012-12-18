@@ -14,8 +14,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
 import org.activiti.engine.impl.RepositoryServiceImpl;
 import org.activiti.engine.impl.test.PluggableActivitiTestCase;
+import org.apache.commons.io.FileUtils;
 import org.junit.Ignore;
 
 
@@ -58,8 +61,12 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	    Map<String, Object> params = new HashMap<String, Object>();
 	    params.put(AbstractProcessDiagramLayerGenerator.PROCESS_DEFINITION_ID, id);
 	    
-	    InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/activiti/diagram/BasicProcessDiagramGeneratorTest.testSimpleProcessDefinition.png" );
-	    assertTrue(isEqual(expectedStream, generator.generateLayer("png", params)));
+	    File expectedFile = new File("src/test/resources/org/processmonitor/activiti/diagram/BasicProcessDiagramGeneratorTest.testSimpleProcessDefinition.png" );
+	    File generatedFile = new File("target/BasicProcessDiagramGeneratorTest.testSimpleProcessDefinition.png" );
+	    ImageIO.write( ImageIO.read(new ByteArrayInputStream( generator.generateLayer("png", params)))
+				, "png"
+				, generatedFile);
+	    assertTrue(FileUtils.contentEquals(expectedFile, generatedFile));
 	}
 	
 	public void testOneNodeHighlight() throws IOException {
@@ -71,8 +78,12 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	    highlightedActivities.add("writeReportTask");
 	    params.put( HighlightNodeDiagramLayer.HIGHLIGHTED_ACTIVITIES, highlightedActivities);
 	    
-	    InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/activiti/diagram/HighlightNodeDiagramLayer.testOneNodeHighlight.png" );   
-	    assertTrue( isEqual(expectedStream, generator.generateLayer("png", params)));	    
+	    File expectedFile = new File("src/test/resources/org/processmonitor/activiti/diagram/HighlightNodeDiagramLayer.testOneNodeHighlight.png" );   
+	    File generatedFile = new File("target/HighlightNodeDiagramLayer.testOneNodeHighlight.png" );   
+	    ImageIO.write( ImageIO.read(new ByteArrayInputStream( generator.generateLayer("png", params)))
+				, "png"
+				, generatedFile);
+	    assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));	    
 	}
 	
 	public void testMergeLayers() throws IOException {
@@ -81,8 +92,12 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	    params.put( "img1", getBytes("src/test/resources/org/processmonitor/activiti/diagram/MergeLayerGenerator.testMergeLayers1.png"));
 	    params.put( "img2", getBytes("src/test/resources/org/processmonitor/activiti/diagram/MergeLayerGenerator.testMergeLayers2.png"));
 	    
-	    InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/activiti/diagram/MergeLayerGenerator.testMergeLayers.png" );  
-	 	assertTrue( isEqual(expectedStream, generator.generateLayer("png", params)));
+	    File expectedFile = new File("src/test/resources/org/processmonitor/activiti/diagram/MergeLayerGenerator.testMergeLayers.png" );  
+	    File generatedFile = new File("target/MergeLayerGenerator.testMergeLayers.png" );  
+	    ImageIO.write( ImageIO.read(new ByteArrayInputStream( generator.generateLayer("png", params)))
+				, "png"
+				, generatedFile);
+	 	assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));
 	}
 	
 	/**
@@ -145,49 +160,11 @@ public class ProcessDiagramGeneratorTest extends PluggableActivitiTestCase {
 	    params.put( WriteNodeDescriptionDiagramLayer.PROCESS_DEFINITION_ID, id);
 	    params.put( "writeReportTask", 5);
 	    
-	    InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/activiti/diagram/WriteCountLayerGeneratorTest.oneNumber.png" );
-
-	    assertTrue( isEqual(expectedStream, generator.generateLayer("png", params)));
-	    
+	    File expectedFile = new File("src/test/resources/org/processmonitor/activiti/diagram/WriteCountLayerGeneratorTest.oneNumber.png" );
+	    File generatedFile = new File("target/WriteCountLayerGeneratorTest.oneNumber.png" );
+	    ImageIO.write( ImageIO.read(new ByteArrayInputStream( generator.generateLayer("png", params)))
+				, "png"
+				, generatedFile);
+	    assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));	    	    
 	}
-
-	static boolean isEqual(InputStream stream1, byte[] byteArray)
-	          throws IOException {
-
-		  ByteArrayInputStream stream2 = new ByteArrayInputStream( byteArray);
-		  
-	      ReadableByteChannel channel1 = Channels.newChannel(stream1);
-	      ReadableByteChannel channel2 = Channels.newChannel(stream2);
-
-	      ByteBuffer buffer1 = ByteBuffer.allocateDirect(1024);
-	      ByteBuffer buffer2 = ByteBuffer.allocateDirect(1024);
-
-	      try {
-	          while (true) {
-
-	              int bytesReadFromStream1 = channel1.read(buffer1);
-	              int bytesReadFromStream2 = channel2.read(buffer2);
-
-	              if (bytesReadFromStream1 == -1 || bytesReadFromStream2 == -1) 
-	            	  return bytesReadFromStream1 == bytesReadFromStream2;
-
-	              buffer1.flip();
-	              buffer2.flip();
-
-	              for (int i = 0; i < Math.min(bytesReadFromStream1, bytesReadFromStream2); i++)
-	                  if (buffer1.get() != buffer2.get())
-	                      return false;
-
-	              buffer1.compact();
-	              buffer2.compact();
-	          }
-	      } catch (IOException e) {
-	    	  System.err.println( e.getStackTrace());
-	    	  throw e;
-	      } finally {
-	          if (stream1 != null) stream1.close();
-	          if (stream2 != null) stream2.close();
-	      }
-	  }
-
 }

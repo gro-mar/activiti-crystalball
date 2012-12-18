@@ -2,9 +2,8 @@ package org.processmonitor.generator.usertasksimulator;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,11 +16,11 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.task.Task;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.processmonitor.generator.DiagramGeneratorTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -29,7 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath*:/org/processmonitor/generator/usertasksimulator/TaskInstanceHistoryDueDateMonitorTest-context.xml")
-public class TaskInstanceHistoryExecutorTest extends DiagramGeneratorTest {
+public class TaskInstanceHistoryExecutorTest {
 
 	private static String PROCESS_KEY = "BasicDueDateSimulationTest";
 	private static String MONITOR_PROCESS_KEY = "dueDateMonitor";
@@ -104,12 +103,11 @@ public class TaskInstanceHistoryExecutorTest extends DiagramGeneratorTest {
 	    params.put( "reportFileName", "target/TaskInstanceHistoryDueDateMoniorTest.dueTimeNotReached.png");
 	    
 	    // start process
-		runtimeService.startProcessInstanceByKey(
-				MONITOR_PROCESS_KEY, "MONITOR-KEY-1", params).getId();
+		runtimeService.startProcessInstanceByKey(MONITOR_PROCESS_KEY, "MONITOR-KEY-1", params);
 	    //check outputs
-		InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/generator/usertasksimulator/dueTimeNotReached.png" );   
-		InputStream generatedStream = new FileInputStream("target/TaskInstanceHistoryDueDateMoniorTest.dueTimeNotReached.png");   
-	    assertTrue( isEqual(expectedStream, generatedStream));	    	
+		File expectedFile = new File("src/test/resources/org/processmonitor/generator/usertasksimulator/dueTimeNotReached.png" );   
+		File generatedFile = new File("target/TaskInstanceHistoryDueDateMoniorTest.dueTimeNotReached.png");   
+	    assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));	    	
 
 	    	    
 	}
@@ -128,11 +126,10 @@ public class TaskInstanceHistoryExecutorTest extends DiagramGeneratorTest {
 	    params.put( "reportFileName", "target/TaskInstanceHistoryDueDateMoniorTest.dueTime1Reached.png");
 	    
 	    // start process
-		runtimeService.startProcessInstanceByKey(
-				MONITOR_PROCESS_KEY, "MONITOR-KEY-2", params).getId();
-		InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/generator/usertasksimulator/dueTime1Reached.png" );   
-		InputStream generatedStream = new FileInputStream("target/TaskInstanceHistoryDueDateMoniorTest.dueTime1Reached.png");   
-	    assertTrue( isEqual(expectedStream, generatedStream));	    	
+		runtimeService.startProcessInstanceByKey(MONITOR_PROCESS_KEY, "MONITOR-KEY-2", params);
+		File expectedFile = new File("src/test/resources/org/processmonitor/generator/usertasksimulator/dueTime1Reached.png" );   
+		File generatedFile = new File("target/TaskInstanceHistoryDueDateMoniorTest.dueTime1Reached.png");   
+	    assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));	    	
 
 	}
 	
@@ -140,7 +137,7 @@ public class TaskInstanceHistoryExecutorTest extends DiagramGeneratorTest {
 	public void testDueTime2Reached() throws IOException {
 		
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(2012, 11, 7, 18, 00 , 58);
+		calendar.set(2012, 11, 7, 18, 00 , 59);
 		Date currentDate =   calendar.getTime();
 		Map<String, Object> params = new Hashtable<String, Object>();
 		
@@ -151,11 +148,10 @@ public class TaskInstanceHistoryExecutorTest extends DiagramGeneratorTest {
 	    params.put( "reportFileName", "target/TaskInstanceDueDateMoniorTest.dueTime2Reached.png");
 	    
 	    // start process
-		runtimeService.startProcessInstanceByKey(
-				MONITOR_PROCESS_KEY, "MONITOR-KEY-3", params).getId();
-		InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/generator/usertasksimulator/dueTime2Reached.png" );   
-		InputStream generatedStream = new FileInputStream("target/TaskInstanceHistoryDueDateMoniorTest.dueTime2Reached.png");   
-	    assertTrue( isEqual(expectedStream, generatedStream));	    	
+		runtimeService.startProcessInstanceByKey(MONITOR_PROCESS_KEY, "MONITOR-KEY-3", params);
+		File expectedFile = new File("src/test/resources/org/processmonitor/generator/usertasksimulator/dueTime2Reached.png" );   
+		File generatedFile = new File("target/TaskInstanceDueDateMoniorTest.dueTime2Reached.png");   
+	    assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));	    	
 
 	}
 	

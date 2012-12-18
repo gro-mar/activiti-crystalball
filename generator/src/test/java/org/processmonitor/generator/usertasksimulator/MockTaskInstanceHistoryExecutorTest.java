@@ -21,7 +21,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.processmonitor.generator.DiagramGeneratorTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -29,7 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath*:/org/processmonitor/generator/usertasksimulator/MockTaskInstanceHistoryDueDateMonitorTest-context.xml")
-public class MockTaskInstanceHistoryExecutorTest extends DiagramGeneratorTest {
+public class MockTaskInstanceHistoryExecutorTest {
 
 	private static String PROCESS_KEY = "BasicDueDateSimulationTest";
 	private static String MONITOR_PROCESS_KEY = "dueDateMonitor";

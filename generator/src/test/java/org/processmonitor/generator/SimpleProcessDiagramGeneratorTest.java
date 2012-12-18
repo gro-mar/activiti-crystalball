@@ -2,8 +2,7 @@ package org.processmonitor.generator;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -14,6 +13,7 @@ import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.repository.Deployment;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath*:/org/processmonitor/generator/SimpleProcessDiagramGeneratorTest-context.xml")
-public class SimpleProcessDiagramGeneratorTest extends DiagramGeneratorTest {
+public class SimpleProcessDiagramGeneratorTest {
 
 	private static String FINANCIALREPORT_PROCESS_KEY = "financialReport";
 	private static String GENERATOR_PROCESS_KEY = "simpleprocessdiagramgeneratortest";
@@ -77,9 +77,9 @@ public class SimpleProcessDiagramGeneratorTest extends DiagramGeneratorTest {
 		runtimeService.startProcessInstanceByKey(
 				GENERATOR_PROCESS_KEY, "GENERATOR-KEY-1", params).getId();
 	    //check outputs
-		InputStream expectedStream = new FileInputStream("src/test/resources/org/processmonitor/generator/SimpleProcessDiagramGeneratorTestExpected.png" );   
-		InputStream generatedStream = new FileInputStream("target/SimpleProcessDiagramGeneratorTest.png");   
-	    assertTrue( isEqual(expectedStream, generatedStream));	    	
+		File expectedFile = new File("src/test/resources/org/processmonitor/generator/SimpleProcessDiagramGeneratorTestExpected.png" );   
+		File generatedFile = new File("target/SimpleProcessDiagramGeneratorTest.png");   
+	    assertTrue( FileUtils.contentEquals(expectedFile, generatedFile));	    	
 	}
 }
 

@@ -12,6 +12,9 @@
         Verify monthly financial report composed by the accountancy department.
         This financial report is going to be sent to all the company shareholders.  
       </documentation>
+      <multiInstanceLoopCharacteristics isSequential="true">
+        <loopCardinality>3</loopCardinality>
+      </multiInstanceLoopCharacteristics>
     </userTask>
     <endEvent id="theEnd"></endEvent>
     <sequenceFlow id="flow1" name="" sourceRef="theStart" targetRef="writeReportTask"></sequenceFlow>
@@ -21,27 +24,27 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_financialReport">
     <bpmndi:BPMNPlane bpmnElement="financialReport" id="BPMNPlane_financialReport">
       <bpmndi:BPMNShape bpmnElement="theStart" id="BPMNShape_theStart">
-        <omgdc:Bounds height="35" width="35" x="75" y="227"></omgdc:Bounds>
+        <omgdc:Bounds height="35" width="35" x="75" y="225"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="writeReportTask" id="BPMNShape_writeReportTask">
-        <omgdc:Bounds height="80" width="100" x="170" y="204"></omgdc:Bounds>
+        <omgdc:Bounds height="80" width="100" x="170" y="203"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="verifyReportTask" id="BPMNShape_verifyReportTask">
-        <omgdc:Bounds height="80" width="100" x="340" y="204"></omgdc:Bounds>
+        <omgdc:Bounds height="80" width="100" x="330" y="204"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="theEnd" id="BPMNShape_theEnd">
         <omgdc:Bounds height="35" width="35" x="480" y="226"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
-        <omgdi:waypoint x="110" y="244"></omgdi:waypoint>
-        <omgdi:waypoint x="170" y="244"></omgdi:waypoint>
+        <omgdi:waypoint x="110" y="242"></omgdi:waypoint>
+        <omgdi:waypoint x="170" y="243"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
-        <omgdi:waypoint x="270" y="244"></omgdi:waypoint>
-        <omgdi:waypoint x="340" y="244"></omgdi:waypoint>
+        <omgdi:waypoint x="270" y="243"></omgdi:waypoint>
+        <omgdi:waypoint x="330" y="244"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
-        <omgdi:waypoint x="440" y="244"></omgdi:waypoint>
+        <omgdi:waypoint x="430" y="244"></omgdi:waypoint>
         <omgdi:waypoint x="480" y="243"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
